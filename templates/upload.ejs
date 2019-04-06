@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Sharing Application - Upload </title>
+     <link rel="stylesheet" type='text/css' href="style.css">
+      <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+
+    <script src="upload.js"></script>
+</head>
+
+<body>
+<div class="nav">
+	<a href="/"><button class="btn home">Home</button></a>
+	<a href="/logout"><button class="btn login">Logout</button></a>
+</div>
+<div id="content">
+<h1>Hi <%=fname%> <%=lname%></h1>
+
+<h2>Share your shit day by uploading an image here.</h2>
+
+<form action="/upload" method="post" enctype="multipart/form-data">
+    <b>File Selected:</b> 
+    <input type="file" name="uploadFile" id="file" placeholder="Browse File..." required>
+    <b>Image Description:<input type="text" name="imagedes" placeholder="Image Title" required> 
+    <input type="submit" value="upload" onclick="update()">
+</form>
+<h1><font color="#00FF00"><%=msg%></font></h1>
+</div>
+
+<div class="footer">
+		<p>CS7025 - Image Sharing Application by Woon Him WONG @ IDM 2019</p>
+</div>
+</body>
+</html>

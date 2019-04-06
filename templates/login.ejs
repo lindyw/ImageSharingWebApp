@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Sharing Application - Login</title>
+     <link rel="stylesheet" type='text/css' href="style.css">
+</head>
+
+<body>
+<div class="nav">
+	<a href="/"><button class="btn home">Home</button></a>
+</div>
+<form action="/login" method="post">
+
+    Username: <input type="text" name="username" placeholder="Username" id="username" required>
+    Password: <input type="password" name="password" placeholder="Password" id="password" required>
+    <input type="submit" value="Login">
+     <a href="/forget">Forget password? Reset here.</a>
+	<font color="#FF0000"><%=msg%></font>
+</form>
+
+<div class="footer">
+		<p>CS7025 - Image Sharing Application by Woon Him WONG @ IDM 2019</p>
+</div>
+</body>
+</html>
