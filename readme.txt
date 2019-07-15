@@ -49,3 +49,7 @@ CREATE TABLE `users2` (
   `surname` varchar(30) DEFAULT NULL,
   `password` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+SELECT name,date,likes,comments,author FROM images WHERE img_id=
+
+ALTER TABLE `table` AUTO_INCREMENT = number;

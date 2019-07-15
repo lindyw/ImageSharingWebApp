@@ -240,6 +240,7 @@ app.post("/upload", function(req, res) {
     var thumb = "";
 
     var query1 = `SELECT COUNT(*) AS count FROM images;`
+
     // check current img_id
     db_connection.query(query1, function(err, result)
 	{
@@ -251,7 +252,6 @@ app.post("/upload", function(req, res) {
 	 		{
 	 			if (result.length == 1)
 	 			{
-		 			 console.log(result[0]['count']);
 		 			 setValue(result[0]['count'].toString());
 		 			 file.mv("assets/uploads/"+imagename); //upload to assets/uploads
 	 			}
@@ -268,8 +268,6 @@ app.post("/upload", function(req, res) {
 	
     function storeimg()
     {
-    	console.log(imagename);
-    	console.log(thumb);
     	var query2 = `INSERT INTO images(img_id, name, description, date, likes, comments, author) VALUES(NULL, "${imagename}", "${description}", "${date}", 0, 0, "${username}")`;
     	 // store in SQL database
 	    db_connection.query(query2, function(err, result)
@@ -317,30 +315,238 @@ app.post("/forget", function(req, res){
 
 	function updatePassword()
 	{
-			db_connection.query(query2, function(err, result)
+		db_connection.query(query2, function(err, result)
+		{
+			if (err) {
+				res.send("A database error occurred: " + err);
+			}
+			else 
+			{
+				res.render("login.ejs", {msg: "Your password has been reset."});
+			}
+		});
+	}
+
+})
+
+app.post("/images/comment", function(req,res) {
+	var sessionUser = req.session.user;
+	var id = req.body.ID;
+	var ncm = req.body.num_cm;
+	var msg = req.body.COMMENT;
+	var date = new Date().toISOString().slice(0, 19).replace('T', ' ');//date
+	var query1 = `INSERT INTO comments(id, userid, imgid, date, text,username) VALUES(NULL,(SELECT id FROM users WHERE username="${sessionUser}"),"${id}","${date}","${msg}","${sessionUser}")`;
+	var query2 = `UPDATE images SET comments=comments+1 WHERE img_id=${id}`;
+
+	if (sessionUser)
 	{
+		//add the comment to comments table
+		db_connection.query(query1, function(err,result)
+		{
+			if (err)
+			{
+				res.send("A database error occurred: " + err);
+			}
+			else 
+			{
+				updateComments();
+			}
+		});
+
+		//update the comment +1 count in images table
+		function updateComments()
+		{
+			db_connection.query(query2, function(err,result)
+			{
+				if (err)
+				{
+					res.send("A database error occurred: " + err);
+				}
+				else 
+				{
+				
+					var results = [{"msg": msg, "user": sessionUser, "date": date}];
+					res.json(results);
+				}
+			});
+		}
+	}
+	else 
+	{
+		res.json("");
+	}
+	
+});
+
+// image (original image + associated information)
+app.get("/images/:id", function(req, res) {
+	var img_id = req.params.id;
+	var sessionUser = req.session.user;
+	var query1 = `SELECT * FROM likes WHERE userid=(SELECT id FROM users WHERE username="${sessionUser}") AND imgid="${img_id}"`;
+	var query2 = `SELECT name,description,date,likes,comments,author FROM images WHERE img_id=${img_id}`;
+	var query3 = `SELECT text,date,username FROM comments WHERE imgid="${img_id}"`;
+	var liked = false;
+
+	var result1, result2;
+	var result3 = [];
+	 db_connection.query(query1, function(err, result)
+	 {
+		if (err) 
+		{
+			res.send("A database error occurred: " + err);
+		}
+		else
+		{
+			if (result.length == 1)
+			{
+				liked = true;
+			}
+			else 
+			{
+				liked = false;
+			}
+		}
+	 });
+
+	db_connection.query(query2, function(err, result){
 		if (err) {
 			res.send("A database error occurred: " + err);
 		}
 		else 
 		{
-			res.render("login.ejs", {msg: "Your password has been reset."});
+			if (result.length == 1)
+			{
+				result1 = result;
+				showComment();
+				
+				
+			}
 		}
 	});
+
+	function showComment()
+	{
+		 db_connection.query(query3, function(err, result)
+		 {
+			if (err) 
+			{
+				res.send("A database error occurred: " + err);
+			}
+			else
+			{
+				if (result.length >0)
+				{
+					result2 = result;
+					cmuser();
+				}
+				else 
+				{
+					// no existing comment 
+					if (sessionUser)
+					{
+						res.render("image.ejs", {"login": true, "id":img_id, "name":result1[0]['name'], "description":result1[0]['description'], "date":result1[0]['date'], 
+											"likes":result1[0]['likes'], "comments":result1[0]['comments'],
+											"author":result1[0]['author'], "liked":liked, 'cmlist':''});
+					}
+					else 
+					{
+						res.render("image.ejs", {"login": false, "id":img_id, "name":result1[0]['name'], "description":result1[0]['description'],"date":result1[0]['date'], 
+											"likes":result1[0]['likes'], "comments":result1[0]['comments'],
+											"author":result1[0]['author'], "liked":liked, 'cmlist':''});
+					}
+				}
+
+					
+			}
+		 });
+				
+	
+
+
+	function cmuser()
+	{
+		if (sessionUser)
+		{
+			res.render("image.ejs", {"login": true, "id":img_id, "name":result1[0]['name'], "description":result1[0]['description'], "date":result1[0]['date'], 
+								"likes":result1[0]['likes'], "comments":result1[0]['comments'],
+								"author":result1[0]['author'], "liked":liked, "cmlist":result2});
+		}
+		else 
+		{
+			console.log(result3);
+			res.render("image.ejs", {"login": false, "id":img_id, "name":result1[0]['name'], "description":result1[0]['description'],"date":result1[0]['date'], 
+								"likes":result1[0]['likes'], "comments":result1[0]['comments'],
+								"author":result1[0]['author'], "liked":liked, "cmlist":result2});
+		}
 	}
+}
+});
 
-})
+app.post('/images/like', function(req, res) {
+	var id = req.body.ID;//get the current image
+	var sessionUser = req.session.user;//get the user who pressed like
+	var likes = req.body.LIKES;
+	var query = `SELECT * FROM likes WHERE userid=(SELECT id FROM users WHERE username="${sessionUser}") AND imgid="${id}"`;
+	var query_1 = `UPDATE images SET likes=likes + 1 WHERE img_id="${id}"`;
+	var query_2 = `INSERT INTO likes(userid,imgid) VALUES((SELECT id FROM users WHERE username="${sessionUser}"),"${id}")`;
+	if (sessionUser != undefined)
+	{
+		checkLIKE();
+		// check if the currect user has liked this image before or not
+		function checkLIKE()
+		{
+			 db_connection.query(query, function(err, result)
+	 		{
+	 			if (err) 
+	 			{
+	 				res.send("A database error occurred: " + err);
+	 			}
+	 			else
+	 			{
+	 				if (result.length < 1)
+	 				{
+	 					addLIKE();
+	 				}
+	 			}
+		 	});
+		}
+		// add like to images table
+		function addLIKE()
+		{
+		    db_connection.query(query_1, function(err, result)
+	 		{
+	 			if (err) 
+	 			{
+	 				res.send("A database error occurred: " + err);
+	 			}
+	 			else
+	 			{
+	 				updateLIKES();
+	 			}
+		 	});
+		}
 
-// app.get("/profile", function(req, res) {
-// 	var sessionUser = req.session.user;
-// 	var sessionFname = req.session.fname;
-// 	var sessionLname = req.session.lname;
-// 	if (sessionUser) {
-// 		res.render("profile.ejs", {"username" : sessionUser, "fname" : sessionFname, "lname" : sessionLname});
-// 	} 
+		// add data to likes table
+		function updateLIKES()
+		{
+			 db_connection.query(query_2, function(err, result)
+	 		{
+	 			if (err) 
+	 			{
+	 				res.send("A database error occurred: " + err);
+	 			}
+	 			else
+	 			{
+	 				var nlikes = parseInt(likes) + 1;
+	 				res.json(nlikes);
+	 			}
+		 	});
+		}
+
+	}
+});
 
 
-// });
 
 app.get("/logout", function(req, res) {
     //delete req.session.data;
@@ -348,10 +554,6 @@ app.get("/logout", function(req, res) {
     res.redirect("/");
 });
 
-function checkQuery(query_string, res){
-
-
-}
 
 /*
 Start the server

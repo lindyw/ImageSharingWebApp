@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Sharing Application - Image</title>
+    <!-- <link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" /> -->
+    <link rel="stylesheet" type='text/css' href="/style.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="/comment.js"></script>
+</head>
+<body>
+<div class="nav">
+	<a href="/"><button class="btn home">Home</button></a>
+	<% if (login == true) {%>
+		<a href="/upload"><button class="btn signup">Upload</button></a>
+		<a href="/logout"><button class="btn login">Logout</button></a>
+	<% } else {%>
+			<a href="../login.html"><button class="btn login">Login</button></a>
+			<a href="/register"><button class="btn signup">Sign Up</button></a>
+	<% } %>
+</div>
+<h1>IDM Student Life Stories Sharing</h1><br>
+<h2>We are IDM students, we have no life!</h2><br>
+<hr>
+<div class="imain">
+	<div class="iimage">
+		<img src="/uploads/<%=name%>" alt="<%=id%>"></img><br>
+	</div>
+
+	<div class="desc">
+    	<p style="text-align:center;"><b><%=description%></b></p>
+    	<p style="text-align: center;font-size: 14px; color: gray;">Uploaded by <b><%=author%></b> on <%=date%></p>
+    	<% if (liked == false) {%>
+    	<div id="like">
+   		<% } else { %>
+   		<div id="liked"> <% } %>
+		 	<% if (liked == false) {%><img src="/like.png"	<% } else { %> <img src="/liked.png" <% } %> width="25px" height="25px" margin-top="10px" <% if (login == true && liked ==false) { %>onclick="updateLike()" <%}%></img><span id="ilike"><%=likes%></span> <img src="/comment.png" width="25px" height="25px" margin-top="10px"></img><span id="icomment"><%=comments%></span>
+		</div>
+	</div>
+	<div class="container">
+		<div class="crow">
+			<% if (login == true) {%>
+			<form action="" class="form">
+				<input type="text" id="comment" name="comment" placeholder="comment here..."/>
+				<button type="submit" class="btn" id="post">Post</button>
+			</form> 
+			<% } else { %>
+			<br><br><br><br><br>
+			<p style="text-align:center;"> Please Login to comment</p>
+			<% } %>
+			<div id="cmbox">
+			<ul id="comments" class="comments">
+			<!-- <li>How are you? testing</li> -->
+			<%if (cmlist != "") { for (var i in cmlist) { %>
+				<li><%=cmlist[i]['text']%><br><span class="cmdesc"><%=cmlist[i]['username']%> <%=cmlist[i]['date'].toUTCString()%></span></li>
+			<% } }%>
+			<!------Show Comments below----->
+		</ul>
+	</div>
+		</div>
+		
+	</div>
+	
+</div>
+
+
+<div class="footer">
+		<p>CS7025 - Image Sharing Application by Woon Him WONG @ IDM 2019</p>
+</div>
+
+</body>
+</html>

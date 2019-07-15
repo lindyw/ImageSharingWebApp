@@ -24,13 +24,15 @@
 
 <div id="icontent">
 	<% if (images != undefined){ for (var i=0; i<images.length; i++) { %>
-	<div class="gallery">
+	<a href="/images/<%=images[i]['img_id']%>"><div class="gallery">
 		<img class="img-item" src="/uploads/<%=images[i]['name']%>" alt="image_<%=images[i]['img_id']%>">
-		<div class="desc"><b><%=images[i]['description']%></b></div>
+		<div class="desc">
+			<b><%=images[i]['description']%></b>
+		</div>
 		<div class="middle">
 			<div class="like"><img src="/like.png" width="25px" height="25px" margin-top="10px"></img><%=images[i]['likes']%> <img src="/comment.png" width="25px" height="25px" margin-top="10px"></img><%=images[i]['comments']%></div>
 		</div>
-	</div>
+	</div></a>
 	<% }} %>
 </div>
 
