@@ -6,9 +6,9 @@ by Woon Him WONG, Lindy
 
 Screenshots:
 
-![Homepage](Screenshots/Capture.JPG)
-![Login](Screenshots/Capture2.JPG)
-![Comment](Screenshots/Capture3.JPG)
-![Hover](Screenshots/Capture3.png)
+![Homepage](ScreenShots/Capture.JPG)
+![Login](ScreenShots/Capture2.JPG)
+![Comment](ScreenShots/Capture3.JPG)
+![Hover](ScreenShots/Capture3.png)
 
 
