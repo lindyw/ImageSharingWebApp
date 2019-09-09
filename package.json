@@ -20,5 +20,8 @@
     "express-fileupload": "^1.1.4",
     "express-session": "^1.15.6",
     "mysql": "^2.16.0"
+  },
+  "engines": {
+    "node": "10.x"
   }
 }
