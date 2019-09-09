@@ -4,6 +4,7 @@
   "description": "Assignment 2 Image sharing web app",
   "main": "main.js",
   "scripts": {
+    "start": "node main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
