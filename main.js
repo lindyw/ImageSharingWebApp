@@ -17,7 +17,7 @@ var app = express();
 var db_connection = mysql.createConnection({
 	//host: "localhost",
 	//user: "root",
-	//password: "LinLin13",
+	//password: "iofajfelajewp123",
 	//database: "wwong_db",
 	//insecureAuth : true
 	host: "sql2.freesqldatabase.com",
